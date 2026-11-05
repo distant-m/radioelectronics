@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Радіоелектроніка, її компоненти і плати</title>
+<meta name="theme-color" content="#13402c">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Радіоелектроніка">
+<style>
+:root { --bg:#f3f5f0; --surface:#fff; --ink:#17201b; --muted:#56635c; --line:#d9dfd8; --accent:#1d6b47; --on-accent:#fff; --copper:#a85a17; color-scheme: light }
+@media (prefers-color-scheme: dark) { :root { --bg:#0e1512; --surface:#16201b; --ink:#e6ece8; --muted:#9aa8a0; --line:#2a3630; --accent:#5cc995; --on-accent:#0e1512; --copper:#e6a064; color-scheme: dark } }
+* { box-sizing: border-box }
+html, body { height: 100% }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  padding: env(safe-area-inset-top) max(16px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(16px, env(safe-area-inset-left)) }
+.wrap { max-width: 520px; margin: 0 auto; padding-block: 40px 32px; display: flex; flex-direction: column; gap: 22px }
+.brand { display: flex; align-items: center; gap: 12px }
+.brand img { width: 48px; height: 48px; border-radius: 12px }
+h1 { font-size: 26px; line-height: 1.2; margin: 0 }
+.sub { color: var(--muted); margin: 0 }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 12px }
+.card h2 { font-size: 17px; margin: 0 }
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.opt { text-align: left; font: inherit; color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer }
+.opt b { display: block; font-size: 15px }
+.opt span { display: block; font-size: 13px; color: var(--muted); margin-top: 2px }
+.opt[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) }
+.opt:focus-visible, .go:focus-visible { outline: 2px solid var(--copper); outline-offset: 2px }
+.stack { display: flex; flex-direction: column; gap: 8px }
+.go { font: 600 16px/1 inherit; font-family: inherit; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 12px; padding: 15px; cursor: pointer }
+.note { font-size: 13px; color: var(--muted); margin: 0 }
+.splash { min-height: 100%; display: grid; place-items: center; color: var(--muted) }
+</style>
+</head>
+<body>
+<div id="root" class="splash">…</div>
+<script>
+(function () {
+  var KEY = 'rtb.settings';
+  function load() { try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; } }
+  function save(s) { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {} }
+  var s = load();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  }
+
+  function latestVersion() {
+    return new Promise(function (resolve) {
+      var done = false;
+      var t = setTimeout(function () { if (!done) { done = true; resolve(null); } }, 2500);
+      fetch('versions.json', { cache: 'no-store' }).then(function (r) { return r.json(); })
+        .then(function (j) { if (!done) { done = true; clearTimeout(t); resolve(j.latest); } })
+        .catch(function () { if (!done) { done = true; clearTimeout(t); resolve(null); } });
+    });
+  }
+
+  function go() {
+    latestVersion().then(function (latest) {
+      var target;
+      if (s.updateMode === 'auto') target = latest || s.pinned || 'v1';
+      else target = s.pinned || latest || 'v1';
+      s.pinned = target; save(s);
+      location.replace(target + '/');
+    });
+  }
+
+  if (s.updateMode) { go(); return; }
+
+  var T = {
+    uk: { title: 'Радіоелектроніка, її компоненти і плати', sub: 'Курс про те, як розуміти електронні плати: від однієї деталі до цілого пристрою. Інформація, зазначена в курсі, стосується стандартних практик плат, електроніки та частот. У курсі не враховано спеціалізовані військові прошивки та радіоелектроніку.',
+      lang: 'Мова', upd: 'Оновлення курсу', auto: 'Оновлювати автоматично', autoD: 'Нова версія з’явиться сама під час запуску.',
+      ask: 'Питати перед оновленням', askD: 'Спершу бачимо, що нового, і вирішуємо самі.', start: 'Почати',
+      note: 'Поступ ніколи не губиться під час оновлення. Цей вибір можна змінити в налаштуваннях.' },
+    en: { title: 'Radio Electronics: Components and Boards', sub: 'A course on understanding circuit boards: from a single part to a whole device. The information in this course covers standard practice for circuit boards, electronics and frequencies. Specialised military firmware and electronics are not covered.',
+      lang: 'Language', upd: 'Course updates', auto: 'Update automatically', autoD: 'A new version appears by itself at launch.',
+      ask: 'Ask before updating', askD: 'You see what’s new and decide yourself.', start: 'Start',
+      note: 'Your progress is never lost in an update. You can change this choice in settings.' }
+  };
+  var lang = s.lang || ((navigator.language || 'uk').slice(0, 2) === 'en' ? 'en' : 'uk');
+  var mode = 'ask';
+
+  function render() {
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    var root = document.getElementById('root');
+    root.className = '';
+    root.innerHTML =
+      '<div class="wrap">' +
+        '<div class="brand"><img src="icons/icon-192.png" alt=""><div><h1>' + t.title + '</h1></div></div>' +
+        '<p class="sub">' + t.sub + '</p>' +
+        '<div class="card"><h2>' + t.lang + '</h2><div class="seg">' +
+          '<button class="opt" type="button" data-lang="uk" aria-pressed="' + (lang === 'uk') + '"><b>Українська</b></button>' +
+          '<button class="opt" type="button" data-lang="en" aria-pressed="' + (lang === 'en') + '"><b>English</b></button>' +
+        '</div></div>' +
+        '<div class="card"><h2>' + t.upd + '</h2><div class="stack">' +
+          '<button class="opt" type="button" data-mode="ask" aria-pressed="' + (mode === 'ask') + '"><b>' + t.ask + '</b><span>' + t.askD + '</span></button>' +
+          '<button class="opt" type="button" data-mode="auto" aria-pressed="' + (mode === 'auto') + '"><b>' + t.auto + '</b><span>' + t.autoD + '</span></button>' +
+        '</div><p class="note">' + t.note + '</p></div>' +
+        '<button class="go" type="button" id="start">' + t.start + '</button>' +
+      '</div>';
+    root.querySelectorAll('[data-lang]').forEach(function (b) { b.onclick = function () { lang = b.dataset.lang; render(); }; });
+    root.querySelectorAll('[data-mode]').forEach(function (b) { b.onclick = function () { mode = b.dataset.mode; render(); }; });
+    document.getElementById('start').onclick = function () { s.lang = lang; s.updateMode = mode; save(s); go(); };
+  }
+  render();
+})();
+</script>
+</body>
+</html>

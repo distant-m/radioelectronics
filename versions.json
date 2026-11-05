@@ -1,0 +1,14 @@
+{
+  "latest": "v1",
+  "versions": [
+    {
+      "id": "v1",
+      "label": "1.0",
+      "date": "2026-10-26",
+      "notes": {
+        "uk": "Перша версія курсу: 17 модулів, тести, фото й анімації.",
+        "en": "First version of the course: 17 modules, tests, photos and animations."
+      }
+    }
+  ]
+}
