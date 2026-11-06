@@ -3,14 +3,23 @@
      Files in a version folder never change, so they are served cache-first.
    - versions.json and the launcher are network-first, so new versions are noticed.
    - Old version caches are kept: a learner who chose not to update keeps working offline. */
-var SHELL = 'rtb-shell-1';
+var SHELL = 'rtb-shell-2';
+// Small fixes published inside an existing version folder: drop the old cached copies once,
+// so installed apps pick them up. Progress (localStorage) and cached photos are untouched.
+var REFRESH = { v1: ['app.js', 'styles.css'] };
 var SHELL_FILES = ['./', 'index.html', 'manifest.webmanifest', 'versions.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png', 'icons/icon-maskable-512.png'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(SHELL).then(function (c) { return c.addAll(SHELL_FILES); }).then(function () { return self.skipWaiting(); }));
 });
-self.addEventListener('activate', function (e) { e.waitUntil(self.clients.claim()); });
+self.addEventListener('activate', function (e) {
+  e.waitUntil(Promise.all(Object.keys(REFRESH).map(function (v) {
+    return caches.open('rtb-' + v).then(function (c) {
+      return Promise.all(REFRESH[v].map(function (p) { return c.delete(new URL(v + '/' + p, self.registration.scope).href, { ignoreSearch: true }); }));
+    });
+  })).then(function () { return self.clients.claim(); }));
+});
 
 function versionOf(url) {
   var scope = new URL(self.registration.scope);
