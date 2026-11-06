@@ -564,14 +564,14 @@ score: 'points', reviewTag: 'from earlier modules', show: 'Show'
   }
   // ---------- intro (shown on first launch; later reachable from the home page and footer) ----------
   var INTRO = {
-    uk: { title: 'Вступ', hello: 'Привіт!', text: ['Це — курс, який був створений мною для себе, бо мені було цікаво розібратися в тому, як читати плати і розуміти, що за пристрій переді мною і які його параметри. З розумінням, що основна аудиторія — це технологічна спільнота сучасного українського спротиву російській агресії, приклади і аналогії проведені саме з тим, чого ми торкаємось (явно чи теоретично) щодня — FPV, РЕБ, тощо.', 'Пройшовши його, мені стали зрозумілі певні речі, які були забуті чи не з’ясовані до кінця. Втім, це тільки перший крок. Тому буду дуже радий і вдячний за відгуки, які зможу покласти в оновлення і таким чином зробити цей ресурс більш корисним для багатьох інших зацікавлених.'],
+    uk: { title: 'Вступ', hello: 'Привіт!', text: ['Курс для самостійного вивчення радіоелектроніки, її компонентів і плат.', 'Буду дуже вдячний за відгуки (на імейл нижче), які зможу покласти в оновлення і таким чином зробити цей ресурс більш корисним для багатьох інших зацікавлених.'],
       installH: 'Як зробити з курсу додаток на телефоні', installP: 'Якщо хочемо, щоб курс працював офлайн на телефоні, як додаток, робимо наступне:',
       ios: ['Відкриваємо сайт курсу в <b>Safari</b>.', 'Натискаємо кнопку <b>«Поділитися»</b> — квадрат зі стрілкою вгору (внизу або вгорі екрана).', 'Гортаємо список униз і вибираємо <b>«На Початковий екран»</b> (англійською — Add to Home Screen). Якщо пункту немає — у самому низу списку натискаємо «Редагувати дії» і додаємо його.', 'Натискаємо <b>«Додати»</b>. На екрані з’явиться значок «Радіоелектроніка».'],
       android: ['Відкриваємо сайт курсу в <b>Chrome</b>.', 'Натискаємо меню <b>⋮</b> (три крапки вгорі праворуч).', 'Вибираємо <b>«Установити додаток»</b> або <b>«Додати на головний екран»</b> (англійською — Install app / Add to Home screen). Chrome може й сам запропонувати встановлення внизу екрана.', 'Підтверджуємо. Значок «Радіоелектроніка» з’явиться серед додатків.'],
       last: '<b>Останній крок, поки є інтернет:</b> відкриваємо курс зі значка, заходимо в Налаштування (шестерня вгорі) і натискаємо <b>«Завантажити всі фото»</b>. Після напису «Готово» курс працює без мережі. Поступ зберігається на цьому телефоні.',
       fbH: 'Зауваження і пропозиції', fbP: 'Якщо маємо зауваження чи пропозиції по курсу — пишемо на:', fbNone: 'Якщо маємо зауваження чи пропозиції по курсу — адресу для листів буде додано тут найближчим часом.',
       go: 'Почати курс', back: 'До модулів', link: 'Вступ: про курс і як встановити на телефон →' },
-    en: { title: 'Introduction', hello: 'Hi!', text: ['I made this course for myself, because I wanted to understand how to read circuit boards — to tell what device is in front of me and what its parameters are. Since the main audience is the technology community of today’s Ukrainian resistance to Russian aggression, the examples and analogies are drawn from what we deal with (directly or in theory) every day — FPV, EW and so on.', 'Going through it made clear to me some things I had forgotten or never fully worked out. Still, this is only a first step. So I will be very glad and grateful for feedback, which I can put into updates and so make this resource more useful for many others who are interested.'],
+    en: { title: 'Introduction', hello: 'Hi!', text: ['A course for self-study of radio electronics, its components and boards.', 'I will be very grateful for feedback (to the email below), which I can put into updates and so make this resource more useful for many others who are interested.'],
       installH: 'How to turn the course into an app on your phone', installP: 'To make the course work offline on a phone, like an app, do the following:',
       ios: ['Open the course site in <b>Safari</b>.', 'Tap the <b>Share</b> button — a square with an arrow pointing up (at the bottom or top of the screen).', 'Scroll down and choose <b>Add to Home Screen</b>. If it is missing, tap “Edit Actions” at the very bottom of the list and add it.', 'Tap <b>Add</b>. The “Радіоелектроніка” icon appears on the screen.'],
       android: ['Open the course site in <b>Chrome</b>.', 'Tap the <b>⋮</b> menu (three dots, top right).', 'Choose <b>Install app</b> or <b>Add to Home screen</b>. Chrome may also offer to install it at the bottom of the screen by itself.', 'Confirm. The “Радіоелектроніка” icon appears among your apps.'],
@@ -583,8 +583,8 @@ score: 'points', reviewTag: 'from earlier modules', show: 'Show'
     var I = INTRO[S.lang] || INTRO.uk, mail = FEEDBACK_EMAIL, first = !S.introSeen;
     if (first) { S.introSeen = true; saveS(); }   // shown automatically only once
     setTitle(I.title, !first);
-    var html = '<div class="intro"><h2 class="page">' + I.hello + '</h2>';
-    html += I.text.map(function (p, n) { return '<p>' + p + '</p>'; }).join('');
+    var html = '<div class="intro">';
+    html += I.text.map(function (p, n) { return n ? '<p>' + p + '</p>' : '<h1 class="page">' + p + '</h1>'; }).join('');
     html += '<h3>' + I.installH + '</h3><p>' + I.installP + '</p>';
     html += '<div class="howto"><h4>iPhone</h4><ol>' + I.ios.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></div>';
     html += '<div class="howto"><h4>Android</h4><ol>' + I.android.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></div>';
